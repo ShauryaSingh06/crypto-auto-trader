@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  token     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  trades    Trade[]  // Relation to trades
+}
+
+model Trade {
+  id        String   @id @default(uuid())
+  userId    String
+  pair      String
+  action    String   // 'buy' or 'sell'
+  amount    Float
+  price     Float
+  status    String   // 'pending', 'completed', 'failed'
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
